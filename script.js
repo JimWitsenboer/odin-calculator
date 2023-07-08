@@ -1,62 +1,40 @@
-// function to validate input
-// create functions for add, substract, divided and
+const calculatorElements = document.querySelectorAll('tbody td');
 
-const add = function(num1, num2) {
-	return num1 + num2;
-};
-
-const subtract = function(num1, num2) {
-  return num1 - num2;
-};
-
-const sum = function(array) {
-  sumArray = 0;
-  for (let i = 0; i < array.length; i++) {
-    sumArray += array[i]
-  }
-  return sumArray;
-};
-
-const multiply = function(...args) {
-  let multipliedArgs = 1;
-  for (let i = 0; i < args.length; i++) {
-    multipliedArgs *= args[i]
-  }
-  return multipliedArgs;
-};
-
-const power = function(num1, num2) {
-  return num1 ** num2;
-};
-
-const factorial = function(num) {
-  if (num === 0) return 1;
-  let makeRange = 1;
-  for (let i = num; i > 0; i--) {
-    makeRange *= i;
-  }
-  return makeRange;
-};
-
-const tbody = document.querySelector('tbody');
-let countClick;
-let firstNumber, operatorValue, secondNumber;
-tbody.addEventListener('click', function (e) {
-  const cell = e.target.closest('td');
-  if (!cell) {return;} // Quit, not clicked on a cell
-  if (countClick === 0) {
-    firstNumber = cell.innerText;
-    document.getElementById("celvalues").innerHTML = firstNumber;
-  } else if(countClick === 1) {
-    operatorValue = cell.innerText;
-    document.getElementById("celvalues").innerHTML = operatorValue;
-  } else {
-    secondNumber = cell.innerText;
-    document.getElementById("celvalues").innerHTML = secondNumber;
-  }
-  // let cellValue = cell.innerText;
-  // document.getElementById("celvalues").innerHTML = cellValue;
-  countClick++;
+let valuesArray = [];
+calculatorElements.forEach(element => {
+  element.addEventListener('click', eventListener);
 });
-console.log(countClick);
-console.log(firstNumber, operatorValue, secondNumber );
+
+const mathOperations = {
+  '+': (x, y) => x + y,
+  '-': (x, y) => x - y,
+  '/': (x, y) => x / y,
+  '*': (x, y) => x * y
+  };
+
+function eventListener(event) {
+  const cell = event.target.closest('td');
+  if (!cell) {return;}
+  let cellValue = cell.innerText
+  valuesArray.push(cellValue);
+  document.getElementById("celvalues").innerHTML = valuesArray.join("");
+
+  let splitValues, firstNumber, equationOperator, lastNumber;
+
+  if (valuesArray.includes("=")) {
+    valuesArray.pop()
+    splitValues = valuesArray.join("").split(/(-|\/|\*|\+)/g);
+    firstNumber = Number(splitValues[0]);
+    equationOperator = splitValues[1];
+    lastNumber = Number(splitValues[2]);
+    const result = mathOperations[equationOperator](firstNumber, lastNumber);
+    document.getElementById("celvalues").innerHTML = result;
+  };
+
+  if (valuesArray.includes("AC")) {
+    valuesArray = [];
+    document.getElementById("celvalues").innerHTML = valuesArray.join("");
+    splitValues, firstNumber, equationOperator, lastNumber = "";
+
+  }
+};
